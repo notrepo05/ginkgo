@@ -123,6 +123,28 @@ var _ = Describe("Server", func() {
 	})
 
 	Describe("Synchronization endpoints", func() {
+		///
+		Describe("ParallelSpecsFinished", func() {
+			Context("all parallel spec nodes are finished(?)", func() {
+				It("should return true", func() {
+					resp, err := http.Get(server.Address() + "/ParallelSpecsFinished")
+					Ω(err).ShouldNot(HaveOccurred())
+					Ω(resp).Should(Equal(types.RemoteParallelSpecsFinishedData{
+						State: types.SpecStateParallelFinished
+					}))
+				})
+			})
+			Context("parallel spec nodes not finished", func() {
+				It("should return false", func() {
+					resp, err := http.Get(server.Address() + "/ParallelSpecsFinished")
+					Ω(err).ShouldNot(HaveOccurred())
+					Ω(resp).Should(Equal(types.RemoteParallelSpecsFinishedData{
+						State: types.SpecStateParallelUnfinished
+					}))
+				})
+			})
+		})
+		///
 		Describe("GETting and POSTing BeforeSuiteState", func() {
 			getBeforeSuite := func() types.RemoteBeforeSuiteData {
 				resp, err := http.Get(server.Address() + "/BeforeSuiteState")
